@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+
+      # analyze.R uses base R only, so no package installation step is needed.
+      - name: Run demo analysis
+        run: Rscript --vanilla analyze.R --demo
+
+      - name: Run sanity checks
+        run: Rscript --vanilla tests/test_analyze.R
